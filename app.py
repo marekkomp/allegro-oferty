@@ -55,16 +55,34 @@ if uploaded_file:
                 action = st.radio("Choose an action:", ["Remove Sentence", "Append Text"], index=0)
 
                 modified_rows = pd.DataFrame()
+                search_rows = pd.DataFrame()
 
                 if action == "Remove Sentence":
                     sentence_to_remove = st.text_input("Enter the sentence to remove from descriptions")
 
                     if description_column and sentence_to_remove:
+                        # Filter rows containing the specified sentence
+                        search_rows = filtered_df[filtered_df[description_column].str.contains(sentence_to_remove, na=False)]
+                        st.write("Rows containing the sentence to remove:")
+                        st.dataframe(search_rows)
+
                         # Remove the specified sentence
                         filtered_df[description_column] = filtered_df[description_column].str.replace(
                             sentence_to_remove, "", regex=False
                         )
-                        modified_rows = filtered_df[filtered_df[description_column].str.contains(sentence_to_remove, na=False)]
+
+                    # Allow download of rows containing the sentence to remove
+                    if not search_rows.empty:
+                        search_output_file = "search_rows_to_remove.xlsx"
+                        search_rows.to_excel(search_output_file, index=False, engine='openpyxl')
+                        with open(search_output_file, "rb") as f:
+                            st.download_button(
+                                label="Download Rows Containing Sentence to Remove",
+                                data=f,
+                                file_name="search_rows_to_remove.xlsx",
+                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            )
+                        os.remove(search_output_file)
 
                 elif action == "Append Text":
                     sentence_to_find = st.text_input("Enter the sentence to search in descriptions")
@@ -113,7 +131,6 @@ if uploaded_file:
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
 
-                    # Clean up temporary file
                     os.remove(modified_output_file)
 
                 # Clean up temporary file
