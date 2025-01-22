@@ -71,6 +71,9 @@ if uploaded_file:
                             sentence_to_remove, "", regex=False
                         )
 
+                        # Identify modified rows
+                        modified_rows = filtered_df[filtered_df[description_column].str.contains(sentence_to_remove, na=False) == False]
+
                     # Allow download of rows containing the sentence to remove
                     if not search_rows.empty:
                         search_output_file = "search_rows_to_remove.xlsx"
@@ -83,6 +86,19 @@ if uploaded_file:
                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             )
                         os.remove(search_output_file)
+
+                    # Allow download of only modified rows
+                    if not modified_rows.empty:
+                        modified_output_file = "modified_rows_remove.xlsx"
+                        modified_rows.to_excel(modified_output_file, index=False, engine='openpyxl')
+                        with open(modified_output_file, "rb") as f:
+                            st.download_button(
+                                label="Download Modified Rows (Removed Sentence)",
+                                data=f,
+                                file_name="modified_rows_remove.xlsx",
+                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            )
+                        os.remove(modified_output_file)
 
                 elif action == "Append Text":
                     sentence_to_find = st.text_input("Enter the sentence to search in descriptions")
