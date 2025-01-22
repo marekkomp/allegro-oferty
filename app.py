@@ -66,13 +66,16 @@ if uploaded_file:
                         st.write("Rows containing the sentence to remove:")
                         st.dataframe(search_rows)
 
+                        # Create a copy of the original data for comparison
+                        original_df = filtered_df.copy()
+
                         # Remove the specified sentence
                         filtered_df[description_column] = filtered_df[description_column].str.replace(
                             sentence_to_remove, "", regex=False
                         )
 
-                        # Identify modified rows
-                        modified_rows = filtered_df[filtered_df[description_column].str.contains(sentence_to_remove, na=False) == False]
+                        # Identify modified rows by comparing the original and modified data
+                        modified_rows = filtered_df[filtered_df[description_column] != original_df[description_column]]
 
                     # Allow download of rows containing the sentence to remove
                     if not search_rows.empty:
