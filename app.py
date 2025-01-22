@@ -27,18 +27,24 @@ if uploaded_file:
             st.write("Original Data:")
             st.dataframe(df)
 
-            # Automatically detect "Kategoria główna" column
+            # Automatically detect "Kategoria główna" and "Podkategoria" columns
             category_column = "Kategoria główna" if "Kategoria główna" in df.columns else None
+            subcategory_column = "Podkategoria" if "Podkategoria" in df.columns else None
 
-            if category_column:
-                # Extract unique categories and create a dropdown
+            if category_column and subcategory_column:
+                # Extract unique categories and subcategories
                 unique_categories = df[category_column].dropna().unique()
+                unique_subcategories = df[subcategory_column].dropna().unique()
+
+                # Create dropdowns for selection
                 selected_category = st.selectbox("Select a main category to filter", unique_categories)
+                selected_subcategory = st.selectbox("Select a subcategory to filter", unique_subcategories)
 
-                # Filter data by selected category
-                filtered_df = df[df[category_column] == selected_category]
+                # Filter data by selected category and subcategory
+                filtered_df = df[(df[category_column] == selected_category) & (df[subcategory_column] == selected_subcategory)]
 
-                st.write("Filtered Data by Selected Category:")
+                # Display filtered data
+                st.write("Filtered Data by Selected Category and Subcategory:")
                 st.dataframe(filtered_df)
 
                 # Specify sentence to remove from descriptions
@@ -67,7 +73,10 @@ if uploaded_file:
                 # Clean up temporary file
                 os.remove(output_file)
             else:
-                st.error("The column 'Kategoria główna' was not found in the selected sheet.")
+                if not category_column:
+                    st.error("The column 'Kategoria główna' was not found in the selected sheet.")
+                if not subcategory_column:
+                    st.error("The column 'Podkategoria' was not found in the selected sheet.")
 
     except Exception as e:
         st.error(f"An error occurred: {e}")
