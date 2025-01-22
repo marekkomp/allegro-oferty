@@ -31,19 +31,24 @@ if uploaded_file:
             subcategory_column = "Podkategoria"
             description_column = "Opis oferty"
 
-            # Specify category to filter
-            selected_category = st.text_input("Enter the category to filter")
+            # Specify main category to filter
+            main_category = st.text_input("Enter the main category to filter")
+
+            # Specify subcategory to filter
+            sub_category = st.text_input("Enter the subcategory to filter")
 
             # Specify sentence to remove from descriptions
-            sentence_to_remove = st.text_input("Enter the sentence to remove from descriptions")
+            sentence_to_remove = st.text_input("Enter the sentence to search and remove from descriptions")
 
             if st.button("Apply Changes"):
-                # Filter by category
-                if selected_category:
-                    filtered_df = df[df[category_column].str.contains(selected_category, na=False)]
-                    st.write("Filtered data:", filtered_df.head())
-                else:
-                    filtered_df = df
+                # Filter by main category and subcategory
+                filtered_df = df
+                if main_category:
+                    filtered_df = filtered_df[filtered_df[category_column].str.contains(main_category, na=False)]
+                if sub_category:
+                    filtered_df = filtered_df[filtered_df[subcategory_column].str.contains(sub_category, na=False)]
+
+                st.write("Filtered data:", filtered_df.head())
 
                 # Remove the sentence from descriptions
                 if sentence_to_remove and description_column in filtered_df.columns:
