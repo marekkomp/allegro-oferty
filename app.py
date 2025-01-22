@@ -27,37 +27,30 @@ if uploaded_file:
             st.write("Original Data:")
             st.dataframe(df)
 
-            # Select columns dynamically
-            category_column = st.selectbox("Select the main category column", df.columns)
-            subcategory_column = st.selectbox("Select the subcategory column", df.columns)
-            description_column = st.selectbox("Select the description column", df.columns)
+            # Automatically detect "Kategoria główna" column
+            category_column = "Kategoria główna" if "Kategoria główna" in df.columns else None
 
-            # Specify main category to filter
-            main_category = st.text_input("Enter the main category to filter")
+            if category_column:
+                # Extract unique categories and create a dropdown
+                unique_categories = df[category_column].dropna().unique()
+                selected_category = st.selectbox("Select a main category to filter", unique_categories)
 
-            # Specify subcategory to filter
-            sub_category = st.text_input("Enter the subcategory to filter")
+                # Filter data by selected category
+                filtered_df = df[df[category_column] == selected_category]
 
-            # Specify sentence to remove from descriptions
-            sentence_to_remove = st.text_input("Enter the sentence to search and remove from descriptions")
-
-            if st.button("Apply Changes"):
-                # Filter by main category and subcategory
-                filtered_df = df
-                if main_category:
-                    filtered_df = filtered_df[filtered_df[category_column].str.contains(main_category, na=False)]
-                if sub_category:
-                    filtered_df = filtered_df[filtered_df[subcategory_column].str.contains(sub_category, na=False)]
-
-                st.write("Filtered data:")
+                st.write("Filtered Data by Selected Category:")
                 st.dataframe(filtered_df)
 
-                # Remove the sentence from descriptions
-                if sentence_to_remove and description_column in filtered_df.columns:
+                # Specify sentence to remove from descriptions
+                description_column = "Opis oferty" if "Opis oferty" in df.columns else None
+                sentence_to_remove = st.text_input("Enter the sentence to search and remove from descriptions")
+
+                if description_column and sentence_to_remove:
+                    # Remove the sentence from descriptions
                     filtered_df[description_column] = filtered_df[description_column].str.replace(sentence_to_remove, "", regex=False)
 
                 # Display modified data
-                st.write("Modified data:")
+                st.write("Modified Data:")
                 st.dataframe(filtered_df)
 
                 # Allow download of modified data
@@ -73,6 +66,8 @@ if uploaded_file:
 
                 # Clean up temporary file
                 os.remove(output_file)
+            else:
+                st.error("The column 'Kategoria główna' was not found in the selected sheet.")
 
     except Exception as e:
         st.error(f"An error occurred: {e}")
