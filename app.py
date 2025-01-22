@@ -43,17 +43,26 @@ if uploaded_file:
                 # Filter data by selected category and subcategory
                 filtered_df = df[(df[category_column] == selected_category) & (df[subcategory_column] == selected_subcategory)]
 
+                # Display the number of positions in the filtered data
+                st.write(f"Number of positions: {len(filtered_df)}")
+
                 # Display filtered data
                 st.write("Filtered Data by Selected Category and Subcategory:")
                 st.dataframe(filtered_df)
 
-                # Specify sentence to remove from descriptions
+                # Specify sentence to search and remove or append
                 description_column = "Opis oferty" if "Opis oferty" in df.columns else None
                 sentence_to_remove = st.text_input("Enter the sentence to search and remove from descriptions")
+                sentence_to_append = st.text_input("Enter the text to append after the specified sentence")
 
-                if description_column and sentence_to_remove:
-                    # Remove the sentence from descriptions
-                    filtered_df[description_column] = filtered_df[description_column].str.replace(sentence_to_remove, "", regex=False)
+                if description_column:
+                    # Remove or append the sentence in descriptions
+                    if sentence_to_remove:
+                        filtered_df[description_column] = filtered_df[description_column].str.replace(sentence_to_remove, "", regex=False)
+                    if sentence_to_append and sentence_to_remove:
+                        filtered_df[description_column] = filtered_df[description_column].str.replace(
+                            sentence_to_remove, f"{sentence_to_remove} {sentence_to_append}", regex=False
+                        )
 
                 # Display modified data
                 st.write("Modified Data:")
