@@ -3,7 +3,19 @@ import pandas as pd
 import os
 
 # Streamlit application
-st.title("Allegro Offers Management")
+st.title("Allegro Description Manager")
+
+st.write("""
+### Instrukcja użytkowania aplikacji
+1. **Wgraj plik**: Kliknij **Upload XLSM file** i wybierz plik XLSM.
+2. **Wybierz arkusz**: Z rozwijanej listy wybierz arkusz, który chcesz przetworzyć.
+3. **Filtruj dane**: Wybierz kategorię główną i podkategorię z rozwijanych list.
+4. **Wybierz akcję**:
+   - **Remove Sentence**: Wpisz zdanie, które chcesz usunąć z opisów.
+   - **Append Text**: Wpisz zdanie do wyszukania oraz tekst do dopisania po tym zdaniu.
+5. **Przeglądaj wyniki**: Obejrzyj przefiltrowane lub zmodyfikowane dane w tabelach.
+6. **Pobierz pliki**: Kliknij odpowiednie przyciski, aby pobrać wyniki w formacie Excel.
+""")
 
 # File uploader
 uploaded_file = st.file_uploader("Upload XLSM file", type="xlsm")
