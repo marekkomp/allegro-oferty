@@ -54,6 +54,8 @@ if uploaded_file:
                 description_column = "Opis oferty" if "Opis oferty" in df.columns else None
                 action = st.radio("Choose an action:", ["Remove Sentence", "Append Text"], index=0)
 
+                modified_rows = pd.DataFrame()
+
                 if action == "Remove Sentence":
                     sentence_to_remove = st.text_input("Enter the sentence to remove from descriptions")
 
@@ -62,6 +64,7 @@ if uploaded_file:
                         filtered_df[description_column] = filtered_df[description_column].str.replace(
                             sentence_to_remove, "", regex=False
                         )
+                        modified_rows = filtered_df[filtered_df[description_column].str.contains(sentence_to_remove, na=False)]
 
                 elif action == "Append Text":
                     sentence_to_find = st.text_input("Enter the sentence to search in descriptions")
@@ -81,6 +84,7 @@ if uploaded_file:
 
                         # Update filtered_df with changes from search_filtered_df
                         filtered_df.update(search_filtered_df)
+                        modified_rows = search_filtered_df
 
                 # Display modified data
                 st.write("Modified Data:")
@@ -96,6 +100,21 @@ if uploaded_file:
                         file_name="modified_file.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
+
+                # Allow download of only modified rows
+                if not modified_rows.empty:
+                    modified_output_file = "modified_rows.xlsx"
+                    modified_rows.to_excel(modified_output_file, index=False, engine='openpyxl')
+                    with open(modified_output_file, "rb") as f:
+                        st.download_button(
+                            label="Download Modified Rows",
+                            data=f,
+                            file_name="modified_rows.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+
+                    # Clean up temporary file
+                    os.remove(modified_output_file)
 
                 # Clean up temporary file
                 os.remove(output_file)
