@@ -26,10 +26,10 @@ if uploaded_file:
             # Display a preview of the data
             st.write("Preview of the selected sheet:", df.head())
 
-            # Column selection for filtering and modification
-            category_column = st.selectbox("Select the main category column", df.columns)
-            subcategory_column = st.selectbox("Select the subcategory column", df.columns)
-            description_column = st.selectbox("Select the description column", df.columns)
+            # Predefined column names
+            category_column = "Kategoria główna"
+            subcategory_column = "Podkategoria"
+            description_column = "Opis oferty"
 
             # Specify category to filter
             selected_category = st.text_input("Enter the category to filter")
