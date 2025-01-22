@@ -57,6 +57,12 @@ if uploaded_file:
                 sentence_to_append = st.text_input("Enter the text to append after the specified sentence")
 
                 if description_column:
+                    if sentence_to_find:
+                        # Filter rows containing the specified sentence
+                        search_filtered_df = filtered_df[filtered_df[description_column].str.contains(sentence_to_find, na=False)]
+                        st.write("Rows containing the searched sentence:")
+                        st.dataframe(search_filtered_df)
+
                     if sentence_to_remove:
                         # Remove the specified sentence
                         filtered_df[description_column] = filtered_df[description_column].str.replace(
