@@ -67,11 +67,20 @@ if uploaded_file:
                     sentence_to_find = st.text_input("Enter the sentence to search in descriptions")
                     sentence_to_append = st.text_input("Enter the text to append after the specified sentence")
 
-                    if description_column and sentence_to_find and sentence_to_append:
+                    if description_column and sentence_to_find:
+                        # Filter rows containing the specified sentence
+                        search_filtered_df = filtered_df[filtered_df[description_column].str.contains(sentence_to_find, na=False)]
+                        st.write("Rows containing the searched sentence:")
+                        st.dataframe(search_filtered_df)
+
                         # Append text after the specified sentence
-                        filtered_df[description_column] = filtered_df[description_column].str.replace(
-                            sentence_to_find, f"{sentence_to_find} {sentence_to_append}", regex=False
-                        )
+                        if sentence_to_append:
+                            search_filtered_df[description_column] = search_filtered_df[description_column].str.replace(
+                                sentence_to_find, f"{sentence_to_find} {sentence_to_append}", regex=False
+                            )
+
+                        # Update filtered_df with changes from search_filtered_df
+                        filtered_df.update(search_filtered_df)
 
                 # Display modified data
                 st.write("Modified Data:")
