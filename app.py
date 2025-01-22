@@ -50,12 +50,18 @@ if uploaded_file:
                 st.write("Filtered Data by Selected Category and Subcategory:")
                 st.dataframe(filtered_df)
 
-                # Specify sentence to search and append
+                # Specify sentence to search, remove, and append
                 description_column = "Opis oferty" if "Opis oferty" in df.columns else None
                 sentence_to_find = st.text_input("Enter the sentence to search in descriptions")
+                sentence_to_remove = st.text_input("Enter the sentence to remove from descriptions")
                 sentence_to_append = st.text_input("Enter the text to append after the specified sentence")
 
                 if description_column:
+                    if sentence_to_remove:
+                        # Remove the specified sentence
+                        filtered_df[description_column] = filtered_df[description_column].str.replace(
+                            sentence_to_remove, "", regex=False
+                        )
                     if sentence_to_find and sentence_to_append:
                         # Append text after the specified sentence
                         filtered_df[description_column] = filtered_df[description_column].str.replace(
