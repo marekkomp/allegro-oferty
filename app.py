@@ -23,8 +23,8 @@ if uploaded_file:
             # Load selected sheet, specifying the correct header row
             df = pd.read_excel(xlsm_data, sheet_name=sheet_name, header=3)
 
-            # Display a preview of the data
-            st.write("Preview of the selected sheet:")
+            # Display the original data without any changes
+            st.write("Original Data:")
             st.dataframe(df)
 
             # Select columns dynamically
