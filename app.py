@@ -20,8 +20,8 @@ if uploaded_file:
         sheet_name = st.selectbox("Select the sheet to process", xlsm_data.sheet_names)
 
         if sheet_name:
-            # Load selected sheet
-            df = pd.read_excel(xlsm_data, sheet_name=sheet_name)
+            # Load selected sheet, specifying the correct header row
+            df = pd.read_excel(xlsm_data, sheet_name=sheet_name, header=3)
 
             # Display a preview of the data
             st.write("Preview of the selected sheet:", df.head())
