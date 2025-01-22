@@ -24,12 +24,13 @@ if uploaded_file:
             df = pd.read_excel(xlsm_data, sheet_name=sheet_name, header=3)
 
             # Display a preview of the data
-            st.write("Preview of the selected sheet:", df.head())
+            st.write("Preview of the selected sheet:")
+            st.dataframe(df)
 
-            # Predefined column names
-            category_column = "Kategoria główna"
-            subcategory_column = "Podkategoria"
-            description_column = "Opis oferty"
+            # Select columns dynamically
+            category_column = st.selectbox("Select the main category column", df.columns)
+            subcategory_column = st.selectbox("Select the subcategory column", df.columns)
+            description_column = st.selectbox("Select the description column", df.columns)
 
             # Specify main category to filter
             main_category = st.text_input("Enter the main category to filter")
@@ -48,14 +49,16 @@ if uploaded_file:
                 if sub_category:
                     filtered_df = filtered_df[filtered_df[subcategory_column].str.contains(sub_category, na=False)]
 
-                st.write("Filtered data:", filtered_df.head())
+                st.write("Filtered data:")
+                st.dataframe(filtered_df)
 
                 # Remove the sentence from descriptions
                 if sentence_to_remove and description_column in filtered_df.columns:
                     filtered_df[description_column] = filtered_df[description_column].str.replace(sentence_to_remove, "", regex=False)
 
                 # Display modified data
-                st.write("Modified data:", filtered_df.head())
+                st.write("Modified data:")
+                st.dataframe(filtered_df)
 
                 # Allow download of modified data
                 output_file = "modified_file.xlsx"
