@@ -35,9 +35,11 @@ if uploaded_file:
             # Load selected sheet, specifying the correct header row
             df = pd.read_excel(xlsm_data, sheet_name=sheet_name, header=3)
 
-            # Display the original data without any changes
+            # Display the original data with a position counter
             st.write("Original Data:")
-            st.dataframe(df)
+            df_with_index = df.copy()
+            df_with_index.insert(0, "Index", range(1, len(df_with_index) + 1))  # Add index column
+            st.dataframe(df_with_index)
 
             # Automatically detect "Kategoria główna" and "Podkategoria" columns
             category_column = "Kategoria główna" if "Kategoria główna" in df.columns else None
@@ -56,11 +58,10 @@ if uploaded_file:
                 filtered_df = df[(df[category_column] == selected_category) & (df[subcategory_column] == selected_subcategory)]
 
                 # Display the number of positions in the filtered data
-                st.write(f"Number of positions: {len(filtered_df)}")
-
-                # Display filtered data
-                st.write("Filtered Data by Selected Category and Subcategory:")
-                st.dataframe(filtered_df)
+                st.write(f"Filtered Data by Selected Category and Subcategory (Total positions: {len(filtered_df)}):")
+                filtered_df_with_index = filtered_df.copy()
+                filtered_df_with_index.insert(0, "Index", range(1, len(filtered_df_with_index) + 1))  # Add index column
+                st.dataframe(filtered_df_with_index)
 
                 # Specify action: Remove or Append
                 description_column = "Opis oferty" if "Opis oferty" in df.columns else None
@@ -75,8 +76,10 @@ if uploaded_file:
                     if description_column and sentence_to_remove:
                         # Filter rows containing the specified sentence
                         search_rows = filtered_df[filtered_df[description_column].str.contains(sentence_to_remove, na=False)]
+                        search_rows_with_index = search_rows.copy()
+                        search_rows_with_index.insert(0, "Index", range(1, len(search_rows_with_index) + 1))  # Add index
                         st.write("Rows containing the sentence to remove:")
-                        st.dataframe(search_rows)
+                        st.dataframe(search_rows_with_index)
 
                         # Create a copy of the original data for comparison
                         original_df = filtered_df.copy()
@@ -122,8 +125,10 @@ if uploaded_file:
                     if description_column and sentence_to_find:
                         # Filter rows containing the specified sentence
                         search_filtered_df = filtered_df[filtered_df[description_column].str.contains(sentence_to_find, na=False)]
+                        search_filtered_df_with_index = search_filtered_df.copy()
+                        search_filtered_df_with_index.insert(0, "Index", range(1, len(search_filtered_df_with_index) + 1))  # Add index
                         st.write("Rows containing the searched sentence:")
-                        st.dataframe(search_filtered_df)
+                        st.dataframe(search_filtered_df_with_index)
 
                         # Append text after the specified sentence
                         if sentence_to_append:
@@ -135,9 +140,11 @@ if uploaded_file:
                         filtered_df.update(search_filtered_df)
                         modified_rows = search_filtered_df
 
-                # Display modified data
+                # Display modified data with a position counter
                 st.write("Modified Data:")
-                st.dataframe(filtered_df)
+                filtered_df_with_index = filtered_df.copy()
+                filtered_df_with_index.insert(0, "Index", range(1, len(filtered_df_with_index) + 1))  # Add index column
+                st.dataframe(filtered_df_with_index)
 
                 # Allow download of modified data
                 output_file = "modified_file.xlsx"
@@ -161,7 +168,6 @@ if uploaded_file:
                             file_name="modified_rows.xlsx",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
-
                     os.remove(modified_output_file)
 
                 # Clean up temporary file
